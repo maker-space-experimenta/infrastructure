@@ -1,0 +1,30 @@
+version: '3'
+services:
+  openldap:
+    image: osixia/openldap
+    environment:
+      LDAP_ORGANISATION: ${MAKERSPACE_LDAP_ORGANIZATION}
+      LDAP_DOMAIN: ${MAKERSPACE_LDAP_DOMAIN}
+      LDAP_ADMIN_PASSWORD: ${MAKERSPACE_LDAP_ADMIN_PASSWORD}
+      LDAP_CONFIG_PASSWORD: ${MAKERSPACE_LDAP_CONFIG_PASSWORD}
+      LDAP_TLS_VERIFY_CLIENT: "try"
+    ports:
+    - "389:389"
+
+  admin:
+    image: osixia/phpldapadmin
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+      PHPLDAPADMIN_HTTPS: "false"
+    networks:
+    - default
+    - traefik_net
+    labels:
+    - "traefik.enable=true"
+    - "traefik.port=80"
+    - "traefik.frontend.rule=Host:${MAKERSPACE_LDAP_URL}"
+    - "traefik.docker.network=traefik_net"
+
+networks:
+  traefik_net:
+    external: true

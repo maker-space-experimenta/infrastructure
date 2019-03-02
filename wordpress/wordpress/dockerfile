@@ -1,0 +1,10 @@
+FROM wordpress:latest
+
+RUN apt-get update
+RUN apt-get install --no-install-recommends -y tidy csstidy nano netcat 
+
+RUN apt-get install software-properties-common -y && \
+    apt-get update -y && \
+    apt-get install libldap2-dev -y && \
+    docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ && \
+    docker-php-ext-install ldap

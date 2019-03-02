@@ -1,0 +1,17 @@
+debug = false
+
+logLevel = "DEBUG"
+defaultEntryPoints = ["http"]
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+
+  [entryPoints.traefik]
+  address = ":8080"
+
+[retry]
+
+[api]
+entrypoint = "traefik"
+dashboard = true
