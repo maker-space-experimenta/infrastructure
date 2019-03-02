@@ -2,6 +2,9 @@ version: '3'
 services:
   openldap:
     image: osixia/openldap
+    volumes:
+      - /data/ldap/data:/var/lib/ldap
+      - /data/ldap/slapd.d:/etc/ldap/slapd.d
     environment:
       LDAP_ORGANISATION: ${MAKERSPACE_LDAP_ORGANIZATION}
       LDAP_DOMAIN: ${MAKERSPACE_LDAP_DOMAIN}
