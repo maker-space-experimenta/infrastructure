@@ -2,6 +2,7 @@ version: '3'
 services:
   openldap:
     image: osixia/openldap
+    restart: always
     volumes:
       - /data/ldap/data:/var/lib/ldap
       - /data/ldap/slapd.d:/etc/ldap/slapd.d
@@ -16,6 +17,7 @@ services:
 
   admin:
     image: osixia/phpldapadmin
+    restart: always
     environment:
       PHPLDAPADMIN_LDAP_HOSTS: "openldap"
       PHPLDAPADMIN_HTTPS: "false"
