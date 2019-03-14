@@ -3,12 +3,12 @@ services:
   redirect:
     image: ianneub/redirect
     environment:
-      - REDIRECT=https://www.experimenta.science/
+      - REDIRECT=https://www.experimenta.science
     networks:
       - traefik_net
     restart: always
     labels:
-    - "traefik.frontend.rule=Host:${MAKERSPACE_URL}"
+      - traefik.frontend.rule=Host:${MAKERSPACE_URL}
       - traefik.docker.network=traefik_net
       - traefik.enable=true
       - traefik.port=80
