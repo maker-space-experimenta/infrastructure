@@ -5,7 +5,7 @@ networks:
 
 services:
   traefik:
-    image: traefik
+    image: traefik:alpine
     restart: always
     command:
       --docker 
@@ -14,8 +14,9 @@ services:
       --web
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./acme.json:/acme.json
+      # - ./acme.json:/acme.json
       - ./traefik.toml:/etc/traefik/traefik.toml
+      - ./certs/:/certs/
     ports:
       - 80:80
       - 443:443
