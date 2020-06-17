@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - /data/cloud-hmnd-de/postgres:/var/lib/postgresql/data
+      - /data/cloud/postgres:/var/lib/postgresql/data
     restart: always
     networks:
       - backend
@@ -29,8 +29,8 @@ services:
       - traefik.port=80
       - traefik.enable=true
     volumes:
-      - /data/cloud-hmnd-de/html:/var/www/html
-      - /data/cloud-hmnd-de/data:/data
+      - /data/cloud/html:/var/www/html
+      - /data/cloud/data:/data
     environment:
       POSTGRES_HOST: database
       POSTGRES_DB: nextcloud
@@ -51,7 +51,7 @@ services:
     build: ./app
     restart: always
     volumes:
-      - /data/cloud-hmnd-de/html:/var/www/html
+      - /data/cloud/html:/var/www/html
     entrypoint: /cron.sh
     depends_on:
       - database
