@@ -13,7 +13,7 @@ services:
       LDAP_CONFIG_PASSWORD: config
       LDAP_TLS_VERIFY_CLIENT: "try"
     ports:
-    - "389:389"
+      - "389:389"
 
   admin:
     image: osixia/phpldapadmin
@@ -24,4 +24,4 @@ services:
     networks:
       - default
     ports:
-      - 80:80
+      - 8888:80

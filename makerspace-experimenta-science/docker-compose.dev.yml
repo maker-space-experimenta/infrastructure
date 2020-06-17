@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.5'
 
 services:
 
@@ -25,6 +25,34 @@ services:
       PMA_HOST: database
     networks:
       - backend
+
+  openldap:
+    image: osixia/openldap
+    restart: always
+    volumes:
+      - /data/ldap/data:/var/lib/ldap
+      - /data/ldap/slapd.d:/etc/ldap/slapd.d
+    environment:
+      LDAP_ORGANISATION: localhost
+      LDAP_DOMAIN: localhost
+      LDAP_ADMIN_PASSWORD: admin
+      LDAP_CONFIG_PASSWORD: config
+      LDAP_TLS_VERIFY_CLIENT: "try"
+    ports:
+      - "389:389"
+    networks:
+      - backend
+
+  admin:
+    image: osixia/phpldapadmin
+    restart: always
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+      PHPLDAPADMIN_HTTPS: "false"
+    networks:
+      - backend
+    ports:
+      - 8888:80
 
 networks:
   backend:
