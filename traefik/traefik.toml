@@ -1,47 +1,24 @@
 debug = false
 
 # logLevel = "DEBUG"
-defaultEntryPoints = ["http"]
+defaultEntryPoints = ["http","https"]
 
 [entryPoints]
   [entryPoints.http]
   address = ":80"
-
-  [entryPoints.traefik]
-  address = ":8080"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+  [entryPoints.https.tls]
+  
 
 [retry]
 
-[api]
-entrypoint = "traefik"
-dashboard = true
-
-
-
-## Try to redirect https to http
-
-# defaultEntryPoints = ["http", "https"]
-# [entryPoints]
-#   [entryPoints.http]
-#   address = ":80"
-#   [entryPoints.https]
-#   address = ":443"
-#     [entryPoints.https.redirect]
-#     entryPoint = "http"
-
-
-
-## SSL
-      
-# defaultEntryPoints = ["http", "https"]
-# [entryPoints]
-#   [entryPoints.http]
-#   address = ":80"
-#     [entryPoints.http.redirect]
-#     entryPoint = "https"
-#   [entryPoints.https]
-#   address = ":443"
-#     [entryPoints.https.tls]
-#       [[entryPoints.https.tls.certificates]]
-#       certFile = "/certs/hn0vweb005.experimenta.science.cer"
-#       keyFile = "/certs/hn0vweb005.experimenta.science.key"
+[acme]
+email = "jonathan.guenz@experimenta.science"
+storage = "acme.json"
+entryPoint = "https"
+OnHostRule = true
+[acme.httpChallenge]
+entryPoint = "http"
