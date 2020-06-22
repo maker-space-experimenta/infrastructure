@@ -13,7 +13,9 @@ services:
       LDAP_CONFIG_PASSWORD: ${MAKERSPACE_LDAP_CONFIG_PASSWORD}
       LDAP_TLS_VERIFY_CLIENT: "try"
     ports:
-    - "389:389"
+      - "389:389"
+    labels:
+      - traefik.enable=false
 
   admin:
     image: osixia/phpldapadmin
