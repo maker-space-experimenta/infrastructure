@@ -65,8 +65,6 @@ services:
       - traefik.enable=false
     networks:
       - backend
-    labels:
-      - traefik.enable=false
 
 networks:
   backend:
