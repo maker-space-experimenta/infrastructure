@@ -25,7 +25,7 @@ services:
     depends_on: 
       - db
     environment:
-      PMA_HOST: ${MYSQL_DATABASE}
+      PMA_HOST: ${MYSQL_HOST}
     networks:
       - backend
     labels:
@@ -40,7 +40,7 @@ services:
     depends_on: 
       - db
     environment:
-      WORDPRESS_DB_HOST: ${MYSQL_DATABASE}
+      WORDPRESS_DB_HOST: ${MYSQL_HOST}
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
       WORDPRESS_DB_USER: ${MYSQL_USER}
       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
