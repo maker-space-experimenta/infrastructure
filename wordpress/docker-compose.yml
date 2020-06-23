@@ -1,26 +1,27 @@
 version: '3.5'
 
-networks:
-  backend:
-  traefik_net:
-    external: true
-
 services:
+
   db:
     image: mariadb:10
+    restart: unless-stopped
     volumes:
-        - /data/wordpress/db:/var/lib/mysql
-    restart: always
+      - /data/wordpress/db:/var/lib/mysql
     environment:
-        MYSQL_ROOT_PASSWORD: ${MAKERSPACE_DB_ROOT_PASSWORD}
-        MYSQL_DATABASE: ${MAKERSPACE_DB_NAME}
-        MYSQL_USER: ${MAKERSPACE_DB_USER}
-        MYSQL_PASSWORD: ${MAKERSPACE_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MAKERSPACE_DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MAKERSPACE_DB_NAME}
+      MYSQL_USER: ${MAKERSPACE_DB_USER}
+      MYSQL_PASSWORD: ${MAKERSPACE_DB_PASSWORD}
     networks: 
-        - backend
+      - backend
+    labels:
+      - traefik.enable=false
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    ports:
+      - 8081:80
     depends_on: 
       - db
     environment:
@@ -35,7 +36,7 @@ services:
 
   wordpress:
     build: .
-    restart: always
+    restart: unless-stopped
     depends_on: 
       - db
     environment:
@@ -57,3 +58,9 @@ services:
     - "traefik.port=80"
     - "traefik.frontend.rule=Host:${MAKERSPACE_URL}"
     - "traefik.docker.network=traefik_net"
+
+
+networks:
+  backend:
+  traefik_net:
+    external: true
