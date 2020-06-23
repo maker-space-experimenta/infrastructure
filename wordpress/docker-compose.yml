@@ -19,6 +19,20 @@ services:
     networks: 
         - backend
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on: 
+      - database
+    environment:
+      PMA_HOST: database
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.frontend.rule=Host:phpmyadmin.${MAKERSPACE_URL}"
+      - "traefik.docker.network=traefik_net"
+
   wordpress:
     build: .
     restart: always
