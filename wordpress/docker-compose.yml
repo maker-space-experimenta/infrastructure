@@ -2,11 +2,11 @@ version: '3.5'
 
 services:
 
-  db:
+  database:
     image: mariadb:10
     restart: unless-stopped
     volumes:
-      - ${WORDPRESS_DIR}/db:/var/lib/mysql
+      - ${WORDPRESS_DIR}/database:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -23,7 +23,7 @@ services:
     ports:
       - 8081:80
     depends_on: 
-      - db
+      - database
     environment:
       PMA_HOST: ${MYSQL_HOST}
     networks:
@@ -38,7 +38,7 @@ services:
     build: .
     restart: unless-stopped
     depends_on: 
-      - db
+      - database
     environment:
       WORDPRESS_DB_HOST: ${MYSQL_HOST}
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
@@ -55,7 +55,6 @@ services:
     - "traefik.port=80"
     - "traefik.frontend.rule=Host:${MAKERSPACE_URL}"
     - "traefik.docker.network=traefik_net"
-
 
 networks:
   backend:
