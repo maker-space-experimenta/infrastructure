@@ -1,6 +1,7 @@
 version: '3.5'
 
 networks:
+  backend:
   traefik_net:
     external: true
 
