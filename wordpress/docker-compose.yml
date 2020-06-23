@@ -22,9 +22,9 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     depends_on: 
-      - database
+      - db
     environment:
-      PMA_HOST: database
+      PMA_HOST: db
     networks:
       - backend
     labels:
