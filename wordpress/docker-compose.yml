@@ -5,17 +5,33 @@ networks:
     external: true
 
 services:
+  db:
+    image: mariadb:10
+    volumes:
+        - /data/wordpress/db:/var/lib/mysql
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: ${MAKERSPACE_DB_ROOT_PASSWORD}
+        MYSQL_DATABASE: ${MAKERSPACE_DB_NAME}
+        MYSQL_USER: ${MAKERSPACE_DB_USER}
+        MYSQL_PASSWORD: ${MAKERSPACE_DB_PASSWORD}
+    networks: 
+        - backend
+
   wordpress:
     build: .
     restart: always
+    depends_on: 
+      - db
     environment:
-      WORDPRESS_DB_HOST: ${MAKERSPACE_DB_HOST}
+      WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_NAME: ${MAKERSPACE_DB_NAME}
       WORDPRESS_DB_USER: ${MAKERSPACE_DB_USER}
       WORDPRESS_DB_PASSWORD: ${MAKERSPACE_DB_PASSWORD}
     volumes:
-      - ${MAKERSPACE_PATH_THEMES}:/var/www/html/wp-content/themes
-      - ${MAKERSPACE_PATH_PLUGINS}:/var/www/html/wp-content/plugins
+      - ${MAKERSPACE_PATH_HTML}:/var/www/html
+      # - ${MAKERSPACE_PATH_THEMES}:/var/www/html/wp-content/themes
+      # - ${MAKERSPACE_PATH_PLUGINS}:/var/www/html/wp-content/plugins
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
       #- ./wp-config.php:/var/www/html/wp-config.php
     networks:
