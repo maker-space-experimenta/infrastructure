@@ -19,13 +19,16 @@ services:
             MYSQL_PASSWORD: ${MYSQL_PASSWORD}
         networks: 
             - backend
+        labels:
+            - "traefik.enable=false"
+    
 
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         restart: unless-stopped
         ports:
-            - 8081:80
+            - 8080:80
         depends_on: 
             - db
         environment:
@@ -33,10 +36,7 @@ services:
         networks:
             - backend
         labels:
-            - "traefik.enable=true"
-            - "traefik.port=80"
-            - "traefik.frontend.rule=Host:phpmyadmin.${MAKERSPACE_URL}"
-            - "traefik.docker.network=traefik_net"
+            - "traefik.enable=false"
 
     wordpress:
         image: wordpress:latest
