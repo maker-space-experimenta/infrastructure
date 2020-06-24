@@ -1,0 +1,64 @@
+version: '3.5'
+
+services:
+
+  database:
+    image: mariadb:10
+    restart: unless-stopped
+    volumes:
+      - ${WORDPRESS_DIR}/database:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks: 
+      - backend
+    labels:
+      - traefik.enable=false
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    ports:
+      - 8081:80
+    depends_on: 
+      - database
+    environment:
+      PMA_HOST: ${MYSQL_HOST}
+    networks:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=80"
+      - "traefik.frontend.rule=Host:phpmyadmin.${MAKERSPACE_URL}"
+      - "traefik.docker.network=traefik_net"
+
+  wordpress:
+    build: .
+    restart: unless-stopped
+    depends_on: 
+      - database
+    environment:
+      WORDPRESS_DB_HOST: ${MYSQL_HOST}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      # - ${WORDPRESS_DIR}/wordpress:/var/www/html
+      - ${MAKERSPACE_PATH_THEMES}:/var/www/html/wp-content/themens
+      - ${MAKERSPACE_PATH_PLUGINS}/wordpress:/var/www/html/wp-content/plugins
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    networks:
+      - backend
+      - traefik_net
+    labels:
+    - "traefik.enable=true"
+    - "traefik.port=80"
+    - "traefik.frontend.rule=Host:${MAKERSPACE_URL}"
+    - "traefik.docker.network=traefik_net"
+
+networks:
+  backend:
+  traefik_net:
+    external: true

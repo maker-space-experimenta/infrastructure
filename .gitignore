@@ -1,8 +1,3 @@
 
-wordpress/mysql/
-
-wordpress/wordpress-data/
-
-device-license-generator/node_modules/
-
-makerspace-experimenta-science/.env
+wordpress/dev-data
+wordpress/.env
