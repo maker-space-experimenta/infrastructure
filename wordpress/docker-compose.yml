@@ -39,7 +39,7 @@ services:
             - "traefik.enable=false"
 
     wordpress:
-        image: wordpress:latest
+        build: ./app
         restart: always
         environment:
             WORDPRESS_DB_HOST: ${MYSQL_HOST}
