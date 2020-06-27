@@ -38,7 +38,7 @@ services:
         labels:
             - "traefik.enable=false"
         volumes: 
-            - ./uploads.ini:/var/www/html/uploads.ini
+            - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
 
     wordpress:
         build: ./app
