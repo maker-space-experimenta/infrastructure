@@ -37,6 +37,8 @@ services:
             - backend
         labels:
             - "traefik.enable=false"
+        volumes: 
+            - ./uploads.ini:/var/www/html/uploads.ini
 
     wordpress:
         build: ./app
