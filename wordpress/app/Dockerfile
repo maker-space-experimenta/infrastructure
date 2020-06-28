@@ -1,7 +1,7 @@
 FROM wordpress:latest
 
-COPY ./plugins /var/www/html/wp-content/plugins
-COPY ./themes /var/www/html/wp-content/themes
+# COPY ./plugins /var/www/html/wp-content/plugins
+# COPY ./themes /var/www/html/wp-content/themes
 # COPY ./wp-config.php /var/www/html/wp-config.php
 
 RUN apt-get update
