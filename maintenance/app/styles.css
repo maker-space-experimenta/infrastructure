@@ -1,0 +1,46 @@
+
+
+@font-face {
+    font-family: "dinot";
+    src: url("/fonts/DINOT.eot?#iefix") format("embedded-opentype"), url("/fonts/DINOT.woff") format("woff"),
+        url("/fonts/DINOT.ttf") format("truetype"), url("/fonts/DINOT.svg#svgFontName") format("svg");
+}
+
+* {
+    font-family: dinot;
+}
+
+body {
+    background-color: #222;
+    padding: 0;
+    margin: 0;
+}
+
+.background {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
+
+    width: 100vw;
+    height: 100vh;
+
+}
+
+.message {
+    padding: 2rem;
+
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-body {
+    padding: 2rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    font-size: 2rem;
+}
