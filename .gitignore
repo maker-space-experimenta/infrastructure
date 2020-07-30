@@ -2,3 +2,4 @@
 wordpress/dev-data
 wordpress/.env
 **/.env
+**/acme.json
