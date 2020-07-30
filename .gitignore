@@ -1,3 +1,4 @@
 
 wordpress/dev-data
 wordpress/.env
+**/.env
