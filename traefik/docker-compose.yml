@@ -22,3 +22,8 @@ services:
       - 8080:8080
     networks:
       - net
+    logging:
+      driver: "json-file"
+      options:
+          max-file: "1"
+          max-size: "100k"
