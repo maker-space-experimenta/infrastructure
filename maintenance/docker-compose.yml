@@ -13,6 +13,11 @@ services:
       - traefik.port=80
     networks:
       - traefik_net
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "10"
+        max-size: "100k"
 
 networks:
   traefik_net:

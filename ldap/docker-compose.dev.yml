@@ -1,4 +1,5 @@
-version: '3'
+version: '3.5'
+
 services:
   openldap:
     image: osixia/openldap
@@ -14,6 +15,11 @@ services:
       LDAP_TLS_VERIFY_CLIENT: "try"
     ports:
       - "389:389"
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "10"
+        max-size: "100k"
 
   admin:
     image: osixia/phpldapadmin
@@ -25,3 +31,8 @@ services:
       - default
     ports:
       - 8888:80
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "10"
+        max-size: "100k"
