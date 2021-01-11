@@ -1,4 +1,4 @@
-FROM wordpress:latest
+FROM wordpress:php7.4-apache
 
 # COPY ./plugins /var/www/html/wp-content/plugins
 # COPY ./themes /var/www/html/wp-content/themes
