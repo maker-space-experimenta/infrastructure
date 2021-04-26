@@ -6,7 +6,7 @@ services:
     image: mariadb:10
     restart: unless-stopped
     volumes:
-      - /data/cloud/db:/var/lib/mysql
+      - ${VOLUME_DIR}/db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_TABLE}
@@ -44,8 +44,8 @@ services:
       - traefik.docker.network=traefik_net
       - traefik.port=80
     volumes:
-      - /data/cloud/html:/var/www/html
-      - /data/cloud/data:/data
+      - ${VOLUME_DIR}/html:/var/www/html
+      - ${VOLUME_DIR}/data:/data
     environment:
       MYSQL_DATABASE: ${DB_TABLE}
       MYSQL_USER: ${DB_USER}
@@ -71,7 +71,7 @@ services:
     build: ./app
     restart: always
     volumes:
-      - /data/cloud/html:/var/www/html
+      - ${VOLUME_DIR}/html:/var/www/html
     entrypoint: /cron.sh
     depends_on:
       - database

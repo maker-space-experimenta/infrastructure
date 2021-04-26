@@ -1,4 +1,4 @@
-FROM nextcloud:19.0.1-apache
+FROM nextcloud:21.0.1-apache
 
 RUN mkdir /data
 
