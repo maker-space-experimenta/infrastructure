@@ -4,8 +4,8 @@ services:
     image: osixia/openldap
     restart: always
     volumes:
-      - /data/ldap/data:/var/lib/ldap
-      - /data/ldap/slapd.d:/etc/ldap/slapd.d
+      - ${VOLUME_DIR}/data:/var/lib/ldap
+      - ${VOLUME_DIR}/slapd.d:/etc/ldap/slapd.d
     environment:
       LDAP_ORGANISATION: ${MAKERSPACE_LDAP_ORGANIZATION}
       LDAP_DOMAIN: ${MAKERSPACE_LDAP_DOMAIN}
