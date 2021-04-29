@@ -18,16 +18,16 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_net
-      - traefik.http.routers.community-makerspace-experimenta-science.entrypoints=http
-      - traefik.http.routers.community-makerspace-experimenta-science.rule=Host("community.makerspace.experimenta.science")
-#      - traefik.http.middlewares.community-makerspace-experimenta-science-https-redirect.redirectscheme.scheme=https
-#      - traefik.http.routers.community-makerspace-experimenta-science.middlewares=community-makerspace-experimenta-science-https-redirect
-#      - traefik.http.routers.community-makerspace-experimenta-science-secure.entrypoints=https
-#      - traefik.http.routers.community-makerspace-experimenta-science-secure.rule=Host("community.makerspace.experimenta.science")
-#      - traefik.http.routers.community-makerspace-experimenta-science-secure.tls=true
-#      - traefik.http.routers.community-makerspace-experimenta-science-secure.tls.certresolver=http
-#      - traefik.http.routers.community-makerspace-experimenta-science-secure.service=community-makerspace-experimenta-science
-      - traefik.http.services.community-makerspace-experimenta-science.loadbalancer.server.port=80
+      - traefik.http.routers.humhub.entrypoints=http
+      - traefik.http.routers.humhub.rule=Host("community.${MAKERSPACE_HOSTNAME}")
+      - traefik.http.middlewares.humhub-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.humhub.middlewares=humhub-https-redirect
+      - traefik.http.routers.humhub-secure.entrypoints=https
+      - traefik.http.routers.humhub-secure.rule=Host("community.${MAKERSPACE_HOSTNAME}")
+      - traefik.http.routers.humhub-secure.tls=true
+      - traefik.http.routers.humhub-secure.tls.certresolver=http
+      - traefik.http.routers.humhub-secure.service=humhub
+      - traefik.http.services.humhub.loadbalancer.server.port=80
     environment:
       HUMHUB_DB_USER: ${HUMHUB_DB_USER}
       HUMHUB_DB_PASSWORD: ${HUMHUB_DB_PASSWORD}
