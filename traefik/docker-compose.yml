@@ -18,11 +18,11 @@ services:
       - ./traefik.yml:/traefik.yml:ro
     labels:
       - "traefik.enable=false"
-      logging:
-        driver: "json-file"
-        options:
-            max-file: "1"
-            max-size: "100k"
+    logging:
+      driver: "json-file"
+      options:
+          max-file: "1"
+          max-size: "100k"
 
 networks:
   traefik_net:
