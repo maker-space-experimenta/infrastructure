@@ -73,11 +73,11 @@ services:
             - traefik.enable=true
             - traefik.docker.network=traefik_net
             - traefik.http.routers.wordpress.entrypoints=http
-            - traefik.http.routers.wordpress.rule=Host("${MAKERSPACE_URL")
+            - traefik.http.routers.wordpress.rule=Host("${MAKERSPACE_URL}")
             - traefik.http.middlewares.wordpress-https-redirect.redirectscheme.scheme=https
             - traefik.http.routers.wordpress.middlewares=wordpress-https-redirect
             - traefik.http.routers.wordpress-secure.entrypoints=https
-            - traefik.http.routers.wordpress-secure.rule=Host("${MAKERSPACE_URL")
+            - traefik.http.routers.wordpress-secure.rule=Host("${MAKERSPACE_URL}")
             - traefik.http.routers.wordpress-secure.tls=true
             - traefik.http.routers.wordpress-secure.tls.certresolver=http
             - traefik.http.routers.wordpress-secure.service=wordpress
