@@ -1,29 +1,29 @@
 version: '3.3'
 
-networks:
-  net:
-
 services:
   traefik:
-    image: traefik:alpine
-    restart: always
-    command:
-      --docker 
-      --docker.domain=${MAKERSPACE_URL}
-      --docker.watch 
-      --web
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./acme.json:/acme.json
-      - ./traefik.toml:/etc/traefik/traefik.toml
+    image: traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - traefik_net
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
-    networks:
-      - net
-    logging:
-      driver: "json-file"
-      options:
-          max-file: "1"
-          max-size: "100k"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/traefik.yml:ro
+    labels:
+      - "traefik.enable=false"
+      logging:
+        driver: "json-file"
+        options:
+            max-file: "1"
+            max-size: "100k"
+
+networks:
+  traefik_net:
+    external: true
