@@ -33,10 +33,13 @@ services:
       HUMHUB_DB_PASSWORD: ${HUMHUB_DB_PASSWORD}
       HUMHUB_DB_HOST: 'db'
       HUMHUB_DB_NAME: 'humhub'
-      HUMHUB_AUTO_INSTALL: 1
-      HUMHUB_DEBUG: 1
-      HUMHUB_PROTO: 'http'
-      HUMHUB_HOST: 'community.makerspace.experimenta.science'
+      HUMHUB_AUTO_INSTALL: 0
+      HUMHUB_DEBUG: 0
+      HUMHUB_PROTO: 'https'
+      HUMHUB_HOST: 'community.${MAKERSPACE_HOSTNAME}'
+      HUMHUB_ADMIN_LOGIN: ${HUMHUB_ADMIN_LOGIN}
+      HUMHUB_ADMIN_EMAIL: ${HUMHUB_ADMIN_EMAIL}
+      HUMHUB_ADMIN_PASSWORD: ${HUMHUB_ADMIN_PASSWORD}
       # Mailer install setup
       HUMHUB_MAILER_SYSTEM_EMAIL_ADDRESS: 'makerspace@experimenta.science'
       HUMHUB_MAILER_SYSTEM_EMAIL_NAME: 'Maker Space'
@@ -56,6 +59,9 @@ services:
       HUMHUB_REDIS_PASSWORD: redis_password
 #   volumes:
 #     - "${HUMHUB_VOLUME_CONFIG}:/var/www/localhost/htdocs/protected/config"
+    volumes:
+      - ${VOLUME_DIR}/config:/var/www/localhost/htdocs/protected/config
+      - ${VOLUME_DIR}/uploads:/var/www/localhost/htdocs/uploads
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/ping"]
       interval: 30s
@@ -66,6 +72,8 @@ services:
     image: mariadb
     networks:
       - backend
+    volumes:
+      - ${VOLUME_DIR}/db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
       MYSQL_DATABASE: 'humhub'
