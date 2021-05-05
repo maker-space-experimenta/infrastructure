@@ -12,11 +12,11 @@ services:
             - traefik.enable=true
             - traefik.docker.network=traefik_net
             - traefik.http.routers.jitsi.entrypoints=http
-            - traefik.http.routers.jitsi.rule=Host(talk.${MAKERSPACE_DOMAIN})
+            - traefik.http.routers.jitsi.rule=Host("talk.${MAKERSPACE_DOMAIN}")
             - traefik.http.middlewares.jitsi-https-redirect.redirectscheme.scheme=https
             - traefik.http.routers.jitsi.middlewares=jitsi-https-redirect
             - traefik.http.routers.jitsi-secure.entrypoints=https
-            - traefik.http.routers.jitsi-secure.rule=Host("talk.hmnd.de")
+            - traefik.http.routers.jitsi-secure.rule=Host("talk.${MAKERSPACE_DOMAIN}")
             - traefik.http.routers.jitsi-secure.tls=true
             - traefik.http.routers.jitsi-secure.tls.certresolver=http
             - traefik.http.routers.jitsi-secure.service=jitsi
