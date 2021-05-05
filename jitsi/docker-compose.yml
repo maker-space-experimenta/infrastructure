@@ -110,7 +110,10 @@ services:
                 aliases:
                     - ${XMPP_DOMAIN}
         logging:
-            driver: "none"
+            driver: "json-file"
+            options:
+                max-file: "1"
+                max-size: "100k"
 
     # XMPP server
     prosody:
@@ -130,7 +133,10 @@ services:
                 aliases:
                     - ${XMPP_SERVER}
         logging:
-            driver: "none"
+            driver: "json-file"
+            options:
+                max-file: "1"
+                max-size: "100k"
 
     # Focus component
     jicofo:
@@ -161,7 +167,10 @@ services:
         networks:
             meet.jitsi:
         logging:
-            driver: "none"
+            driver: "json-file"
+            options:
+                max-file: "1"
+                max-size: "100k"
 
     # Video bridge
     jvb:
@@ -197,7 +206,10 @@ services:
                 aliases:
                     - jvb.meet.jitsi
         logging:
-            driver: "none"
+            driver: "json-file"
+            options:
+                max-file: "1"
+                max-size: "100k"
 
 # Custom network so all services can communicate using a FQDN
 networks:
