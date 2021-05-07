@@ -16,6 +16,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yml:/traefik.yml:ro
+      - ./acme.json:/acme.json
     # labels:
     #   - "traefik.enable=true"
     #   - "traefik.http.routers.traefik.entrypoints=http"
