@@ -129,6 +129,7 @@ RUN mkdir -p /usr/src/humhub/protected/config/ && \
 COPY etc/ /etc/
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
+RUN chmod -R 777 /var/www/localhost/htdocs
 RUN chmod 600 /etc/crontabs/nginx && \
     chmod +x /usr/local/bin/docker-entrypoint.sh
 
