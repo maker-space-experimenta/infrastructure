@@ -29,26 +29,26 @@ services:
     
 
 
-    # phpmyadmin:
-    #     image: phpmyadmin/phpmyadmin
-    #     restart: unless-stopped
-    #     ports:
-    #         - 8081:80
-    #     depends_on: 
-    #         - db
-    #     environment:
-    #         PMA_HOST: ${MYSQL_HOST}
-    #     networks:
-    #         - backend
-    #     labels:
-    #         - "traefik.enable=false"
-    #     volumes: 
-    #         - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
-    #     logging:
-    #         driver: "json-file"
-    #         options:
-    #             max-file: "1"
-    #             max-size: "100k"
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        restart: unless-stopped
+        ports:
+            - 8081:80
+        depends_on: 
+            - db
+        environment:
+            PMA_HOST: ${MYSQL_HOST}
+        networks:
+            - backend
+        labels:
+            - "traefik.enable=false"
+        volumes: 
+            - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+        logging:
+            driver: "json-file"
+            options:
+                max-file: "1"
+                max-size: "100k"
 
     wordpress:
         build: ./app
@@ -61,10 +61,10 @@ services:
             WORDPRESS_DB_USER: ${MYSQL_USER}
             WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
         volumes:
-            - ${WORDPRESS_DIR}/wordpress:/var/www/html
+            # - ${WORDPRESS_DIR}/wordpress:/var/www/html
             - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
-            # - ${MAKERSPACE_PATH_THEMES}:/var/www/html/wp-content/themes
-            # - ${MAKERSPACE_PATH_PLUGINS}:/var/www/html/wp-content/plugins
+            - ${MAKERSPACE_PATH_THEMES}:/var/www/html/wp-content/themes
+            - ${MAKERSPACE_PATH_PLUGINS}:/var/www/html/wp-content/plugins
             # - ./wp-config.php:/var/www/html/wp-config.php
         networks:
             - backend
