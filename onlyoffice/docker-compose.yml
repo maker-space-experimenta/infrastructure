@@ -33,3 +33,14 @@ services:
     volumes:
       - ${VOLUMES}/document_data:/var/www/onlyoffice/Data
       - ${VOLUMES}/document_log:/var/log/onlyoffice
+
+  nginx:
+    container_name: nginx-server
+    image: nginx
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - app_data:/var/www/html
