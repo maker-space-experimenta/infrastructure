@@ -10,6 +10,9 @@ services:
     container_name: onlyoffice-document-server
     image: onlyoffice/documentserver:latest
     restart: always
+    networks:
+      - backend
+      - traefik_net
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik_net
