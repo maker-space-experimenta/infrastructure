@@ -4,7 +4,7 @@ services:
 
   database:
     image: mariadb:10
-    name: nextcloud_db
+    container_name: nextcloud_db
     restart: unless-stopped
     volumes:
       - ${VOLUME_DIR}/db:/var/lib/mysql
@@ -25,7 +25,7 @@ services:
 
   redis:
     image: redis
-    name: nextcloud_redis
+    container_name: nextcloud_redis
     restart: always
     labels:
       - traefik.enable=false
@@ -39,7 +39,7 @@ services:
 
   app:
     build: ./app
-    name: nextcloud_app
+    container_name: nextcloud_app
     restart: always
     labels:
       - traefik.enable=true
@@ -80,7 +80,7 @@ services:
 
   cron:
     build: ./app
-    name: nextcloud_cron
+    container_name: nextcloud_cron
     restart: always
     volumes:
       - ${VOLUME_DIR}/html:/var/www/html
