@@ -14,19 +14,6 @@ services:
     networks:
       - backend
       - traefik_net
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik_net
-      - traefik.http.routers.onlyoffice.entrypoints=http
-      - traefik.http.routers.onlyoffice.rule=Host("office.${MAKERSPACE_DOMAIN}")
-      - traefik.http.middlewares.onlyoffice-https-redirect.redirectscheme.scheme=https
-      - traefik.http.routers.onlyoffice.middlewares=onlyoffice-https-redirect
-      - traefik.http.routers.onlyoffice-secure.entrypoints=https
-      - traefik.http.routers.onlyoffice-secure.rule=Host("office.${MAKERSPACE_DOMAIN}")
-      - traefik.http.routers.onlyoffice-secure.tls=true
-      - traefik.http.routers.onlyoffice-secure.tls.certresolver=http
-      - traefik.http.routers.onlyoffice-secure.service=onlyoffice
-      - traefik.http.services.onlyoffice.loadbalancer.server.port=80
 #    expose:
 #      - '80'
 #      - '443'
@@ -38,8 +25,21 @@ services:
     container_name: nginx-server
     image: nginx
     restart: always
-    ports:
-      - 80:80
-      - 443:443
+    labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik_net
+        - traefik.http.routers.onlyoffice.entrypoints=http
+        - traefik.http.routers.onlyoffice.rule=Host("office.${MAKERSPACE_DOMAIN}")
+        - traefik.http.middlewares.onlyoffice-https-redirect.redirectscheme.scheme=https
+        - traefik.http.routers.onlyoffice.middlewares=onlyoffice-https-redirect
+        - traefik.http.routers.onlyoffice-secure.entrypoints=https
+        - traefik.http.routers.onlyoffice-secure.rule=Host("office.${MAKERSPACE_DOMAIN}")
+        - traefik.http.routers.onlyoffice-secure.tls=true
+        - traefik.http.routers.onlyoffice-secure.tls.certresolver=http
+        - traefik.http.routers.onlyoffice-secure.service=onlyoffice
+        - traefik.http.services.onlyoffice.loadbalancer.server.port=80
+    # ports:
+    #   - 80:80
+    #   - 443:443
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
