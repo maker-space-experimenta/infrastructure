@@ -14,9 +14,9 @@ services:
             SA_PASSWORD: ${TOOLBOX_DB_SA_PASSWORD}
             ACCEPT_EULA: "Y"
         volumes:
-            - ${datadir}/mssql/data:/var/opt/mssql/data
-            - ${datadir}/mssql/log:/var/opt/mssql/log
-            - ${datadir}/mssql/secrets:/var/opt/mssql/secrets
+            - ${VOLUMES}/mssql/data:/var/opt/mssql/data
+            - ${VOLUMES}/mssql/log:/var/opt/mssql/log
+            - ${VOLUMES}/mssql/secrets:/var/opt/mssql/secrets
         networks:
             - backend
         # ports:
@@ -63,7 +63,7 @@ services:
             - mssql
             - mssqlscripts
         volumes:
-            - /data/${SERVICE_NAME}/themes:/opt/jboss/keycloak/themes
+            - ${VOLUMES}/themes:/opt/jboss/keycloak/themes
         
     mail:
         image: elsdoerfer/exim-sender
