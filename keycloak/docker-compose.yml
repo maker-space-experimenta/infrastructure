@@ -1,0 +1,79 @@
+version: '3'
+
+networks:
+    backend:
+    traefik_net:
+        external: true
+
+services:
+
+    mssql:
+        image: "mcr.microsoft.com/mssql/server"
+        restart: always
+        environment:
+            SA_PASSWORD: ${TOOLBOX_DB_SA_PASSWORD}
+            ACCEPT_EULA: "Y"
+        volumes:
+            - ${datadir}/mssql/data:/var/opt/mssql/data
+            - ${datadir}/mssql/log:/var/opt/mssql/log
+            - ${datadir}/mssql/secrets:/var/opt/mssql/secrets
+        networks:
+            - backend
+        # ports:
+        #   - 1433:1433
+
+
+    mssqlscripts:
+        image: mcr.microsoft.com/mssql-tools
+        restart: on-failure
+        depends_on:
+            - mssql
+        networks:
+            - backend
+        command: /bin/bash -c 'until /opt/mssql-tools/bin/sqlcmd -S mssql -U sa -P "${TOOLBOX_DB_SA_PASSWORD}" -Q "create database Keycloak"; do sleep 5; done'
+
+
+    keycloak:
+        image: jboss/keycloak:14.0.0
+        restart: always
+        environment:
+            - DB_VENDOR=mssql
+            - DB_USER=${KEYCLOAK_DB_USER}
+            - DB_PASSWORD=${KEYCLOAK_DB_PASSWORD}
+            - DB_ADDR=${KEYCLOAK_DB_SERVER}
+            - DB_DATABASE=${KEYCLOAK_DB_NAME}
+            - PROXY_ADDRESS_FORWARDING=true
+        labels:
+            - traefik.enable=true
+            - traefik.docker.network=traefik_net
+            - traefik.http.routers.${SERVICE_NAME}.entrypoints=http
+            - traefik.http.routers.${SERVICE_NAME}.rule=Host("login.${MAKERSPACE_DOMAIN}")
+            - traefik.http.middlewares.${SERVICE_NAME}-https-redirect.redirectscheme.scheme=https
+            - traefik.http.routers.${SERVICE_NAME}.middlewares=${SERVICE_NAME}-https-redirect
+            - traefik.http.routers.${SERVICE_NAME}-secure.entrypoints=https
+            - traefik.http.routers.${SERVICE_NAME}-secure.rule=Host("login.${MAKERSPACE_DOMAIN}")
+            - traefik.http.routers.${SERVICE_NAME}-secure.tls=true
+            - traefik.http.routers.${SERVICE_NAME}-secure.tls.certresolver=http
+            - traefik.http.routers.${SERVICE_NAME}-secure.service=${SERVICE_NAME}
+            - traefik.http.services.${SERVICE_NAME}.loadbalancer.server.port=8080
+        networks:
+            - backend
+            - traefik_net
+        depends_on:
+            - mssql
+            - mssqlscripts
+        volumes:
+            - /data/${SERVICE_NAME}/themes:/opt/jboss/keycloak/themes
+        
+    mail:
+        image: elsdoerfer/exim-sender
+        restart: always
+        volumes:
+            - ./tmp/exim:/var/spool/exim4
+        environment:
+            - PRIMARY_HOST=login.${MAKERSPACE_DOMAIN}
+            - ALLOWED_HOSTS=localhost ; keycloak
+        expose:
+            - 25
+        networks:
+            - backend
