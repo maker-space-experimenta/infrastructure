@@ -1,76 +1,81 @@
 version: '3'
+
+networks:
+  traefik_net:
+    external: true
+  onlyoffice:
+
+
 services:
   onlyoffice-mysql-server:
     container_name: onlyoffice-mysql-server
     image: mysql:5.7
-    environment:
-     - MYSQL_ROOT_PASSWORD=my-secret-pw
+    env_file:
+      - .env
     networks:
-     - onlyoffice
-    stdin_open: true
-    tty: true
+      - onlyoffice
     restart: always
     volumes:
-     - ./config/mysql/conf.d:/etc/mysql/conf.d
-     - ./config/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-     - mysql_data:/var/lib/mysql
+      # - ./config/mysql/conf.d:/etc/mysql/conf.d
+      # - ./config/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ${VOLUMES}/mysql_data:/var/lib/mysql
+
   onlyoffice-community-server:
     container_name: onlyoffice-community-server
     image: onlyoffice/communityserver:11.0.0.1458
     depends_on:
-     - onlyoffice-mysql-server
-    environment:
-     - ONLYOFFICE_CORE_MACHINEKEY=core_secret
-     - CONTROL_PANEL_PORT_80_TCP=80
-     - CONTROL_PANEL_PORT_80_TCP_ADDR=onlyoffice-control-panel
-     - MYSQL_SERVER_ROOT_PASSWORD=my-secret-pw
-     - MYSQL_SERVER_DB_NAME=onlyoffice
-     - MYSQL_SERVER_HOST=onlyoffice-mysql-server
-     - MYSQL_SERVER_USER=onlyoffice_user
-     - MYSQL_SERVER_PASS=onlyoffice_pass
+      - onlyoffice-mysql-server
+    env_file:
+      - .env
     networks:
-     - onlyoffice
-    ports:
-     - '80:80'
-     - '443:443'
-     - '5222:5222'
-    stdin_open: true
-    tty: true
+      - onlyoffice
+      - traefik_net
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik_net
+      - traefik.http.routers.onlyoffice.entrypoints=http
+      - traefik.http.routers.onlyoffice.rule=Host("office.${MAKERSPACE_DOMAIN}")
+      - traefik.http.middlewares.onlyoffice-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.onlyoffice.middlewares=onlyoffice-https-redirect
+      - traefik.http.routers.onlyoffice-secure.entrypoints=https
+      - traefik.http.routers.onlyoffice-secure.rule=Host("office.${MAKERSPACE_DOMAIN}")
+      - traefik.http.routers.onlyoffice-secure.tls=true
+      - traefik.http.routers.onlyoffice-secure.tls.certresolver=http
+      - traefik.http.routers.onlyoffice-secure.service=onlyoffice
+      - traefik.http.services.onlyoffice.loadbalancer.server.port=80
     restart: always
     privileged: true
     volumes:
-     - community_data:/var/www/onlyoffice/Data
-     - community_log:/var/log/onlyoffice
-     - community_letsencrypt:/etc/letsencrypt
-     - /sys/fs/cgroup:/sys/fs/cgroup:ro
-     - ./certs:/var/www/onlyoffice/Data/certs
+      - ${VOLUMES}/community_data:/var/www/onlyoffice/Data
+      - ${VOLUMES}/community_log:/var/log/onlyoffice
+      - ${VOLUMES}/community_letsencrypt:/etc/letsencrypt
+
   onlyoffice-control-panel:
     container_name: onlyoffice-control-panel
     depends_on:
-     - onlyoffice-community-server
+      - onlyoffice-community-server
     image: onlyoffice/controlpanel:2.9.0.351
-    environment:
-     - ONLYOFFICE_CORE_MACHINEKEY=core_secret
-    expose:
-      - '80'
-      - '443'
+    env_file:
+      - .env
     restart: always
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - controlpanel_data:/var/www/onlyoffice/Data
-      - controlpanel_log:/var/log/onlyoffice
+      # - /var/run/docker.sock:/var/run/docker.sock
+      - ${VOLUMES}/controlpanel_data:/var/www/onlyoffice/Data
+      - ${VOLUMES}/controlpanel_log:/var/log/onlyoffice
     networks:
       - onlyoffice
-    stdin_open: true
-    tty: true
-networks:
-  onlyoffice:
-    driver: 'bridge'
-volumes:
-  community_mysql:
-  community_data:
-  community_log:
-  community_letsencrypt:
-  controlpanel_data:
-  controlpanel_log:
-  mysql_data:
+      - traefik_net
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik_net
+      - traefik.http.routers.onlyoffice_control.entrypoints=http
+      - traefik.http.routers.onlyoffice_control.rule=Host("control.office.${MAKERSPACE_DOMAIN}")
+      - traefik.http.middlewares.onlyoffice_control-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.onlyoffice_control.middlewares=onlyoffice_control-https-redirect
+      - traefik.http.routers.onlyoffice_control-secure.entrypoints=https
+      - traefik.http.routers.onlyoffice_control-secure.rule=Host("control.office.${MAKERSPACE_DOMAIN}")
+      - traefik.http.routers.onlyoffice_control-secure.tls=true
+      - traefik.http.routers.onlyoffice_control-secure.tls.certresolver=http
+      - traefik.http.routers.onlyoffice_control-secure.service=onlyoffice_control
+      - traefik.http.services.onlyoffice_control.loadbalancer.server.port=80
+
