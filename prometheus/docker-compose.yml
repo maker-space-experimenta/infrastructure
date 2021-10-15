@@ -1,0 +1,51 @@
+version: '3'
+
+networks:
+  prometheus_net:
+    external: true
+  traefik_net:
+    external: true
+
+services:
+  prometheus:
+    image: prom/prometheus:v2.30.0
+    container_name: prometheus_server
+    # ports:
+    #   - "9090:9090"
+    networks:
+      - prometheus_net
+      - traefik_net
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik_net
+      - traefik.http.routers.prometheus.entrypoints=http
+      - traefik.http.routers.prometheus.rule=Host("prometheus.${MAKERSPACE_DOMAIN}")
+      - traefik.http.middlewares.prometheus-https-redirect.redirectscheme.scheme=https
+      - traefik.http.routers.prometheus.middlewares=prometheus-https-redirect
+      - traefik.http.routers.prometheus-secure.entrypoints=https
+      - traefik.http.routers.prometheus-secure.rule=Host("prometheus.${MAKERSPACE_DOMAIN}")
+      - traefik.http.routers.prometheus-secure.tls=true
+      - traefik.http.routers.prometheus-secure.tls.certresolver=http
+      - traefik.http.routers.prometheus-secure.service=prometheus
+      - traefik.http.services.prometheus.loadbalancer.server.port=9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  nodeexporter:
+    image: prom/node-exporter:v1.2.2
+    command:
+      - --web.listen-address=0.0.0.0:9100
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --path.rootfs=/host/root
+      - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+)($$|/)
+      - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$$
+    volumes:
+      - /proc:/host/proc
+      - /sys:/host/sys
+      - /:/host/root:ro
+    # ports:
+    #   - "9100:9100"
+    pid: host
+    networks:
+      - prometheus_net
