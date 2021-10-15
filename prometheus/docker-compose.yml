@@ -28,7 +28,8 @@ services:
       - traefik.http.routers.prometheus-secure.tls.certresolver=http
       - traefik.http.routers.prometheus-secure.service=prometheus
       - traefik.http.services.prometheus.loadbalancer.server.port=9090
-      - traefik.http.middlewares.prometheus-auth.basicauth.usersfile=./.users
+      - traefik.http.middlewares.prometheus-auth.basicauth.usersfile=/.users
+      - traefik.http.routers.prometheus-secure.middlewares=prometheus-auth
     volumes:
       - ${VOLUMES}/data:/prometheus
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
