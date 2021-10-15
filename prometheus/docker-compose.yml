@@ -33,6 +33,7 @@ services:
 
   nodeexporter:
     image: prom/node-exporter:v1.2.2
+    container_name: prometheus_nodeexporter
     command:
       - --web.listen-address=0.0.0.0:9100
       - --path.procfs=/host/proc
