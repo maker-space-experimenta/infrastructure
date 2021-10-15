@@ -28,8 +28,15 @@ services:
       - traefik.http.routers.prometheus-secure.tls.certresolver=http
       - traefik.http.routers.prometheus-secure.service=prometheus
       - traefik.http.services.prometheus.loadbalancer.server.port=9090
+      - traefik.http.middlewares.prometheus-auth.basicauth.usersfile=./.users
     volumes:
+      - ${VOLUMES}/data:/prometheus
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    logging:
+      driver: "json-file"
+      options:
+          max-file: "1"
+          max-size: "100k"
 
   nodeexporter:
     image: prom/node-exporter:v1.2.2
@@ -50,3 +57,8 @@ services:
     pid: host
     networks:
       - prometheus_net
+    logging:
+      driver: "json-file"
+      options:
+          max-file: "1"
+          max-size: "100k"
