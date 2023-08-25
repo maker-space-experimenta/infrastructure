@@ -1,12 +1,14 @@
 version: '3.3'
 
+# local
+
 networks:
     backend:
     traefik_net:
         external: true
 
 services:
-    
+
     db:
         image: mysql:5.7
         volumes:
@@ -17,7 +19,7 @@ services:
             MYSQL_DATABASE: ${MYSQL_DATABASE}
             MYSQL_USER: ${MYSQL_USER}
             MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-        networks: 
+        networks:
             - backend
         labels:
             - "traefik.enable=false"
@@ -26,7 +28,7 @@ services:
             options:
                 max-file: "1"
                 max-size: "100k"
-    
+
 
 
     phpmyadmin:
@@ -34,7 +36,7 @@ services:
         restart: unless-stopped
         ports:
             - 8081:80
-        depends_on: 
+        depends_on:
             - db
         environment:
             PMA_HOST: ${MYSQL_HOST}
@@ -42,7 +44,7 @@ services:
             - backend
         labels:
             - "traefik.enable=false"
-        volumes: 
+        volumes:
             - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
         logging:
             driver: "json-file"
@@ -80,6 +82,7 @@ services:
             - traefik.http.routers.wordpress-secure.rule=Host("${MAKERSPACE_URL}")
             - traefik.http.routers.wordpress-secure.tls=true
             - traefik.http.routers.wordpress-secure.tls.certresolver=http
+#            - traefik.http.routers.wordpress-secure.tls.options.minVersion="VersionTLS13"
             - traefik.http.routers.wordpress-secure.service=wordpress
             - traefik.http.services.wordpress.loadbalancer.server.port=80
         logging:

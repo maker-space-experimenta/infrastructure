@@ -1,8 +1,4 @@
-FROM wordpress:php8.0-apache
-
-# COPY ./plugins /var/www/html/wp-content/plugins
-# COPY ./themes /var/www/html/wp-content/themes
-# COPY ./wp-config.php /var/www/html/wp-config.php
+FROM wordpress:6.3.0-php8.2-apache
 
 RUN apt-get update
 RUN apt-get install --no-install-recommends -y tidy csstidy nano netcat 
