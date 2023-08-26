@@ -17,7 +17,8 @@ services:
         - traefik.http.routers.onlyoffice.entrypoints=http
         - traefik.http.routers.onlyoffice.rule=Host("office.${MAKERSPACE_DOMAIN}")
         - traefik.http.middlewares.onlyoffice-https-redirect.redirectscheme.scheme=https
-        - traefik.http.routers.onlyoffice.middlewares=onlyoffice-https-redirect
+        - traefik.http.middlewares.onlyoffice-headers.headers.customrequestheaders.X-Forwarded-Proto=https",
+        - traefik.http.routers.onlyoffice.middlewares=onlyoffice-https-redirect,onlyoffice-headers
         - traefik.http.routers.onlyoffice-secure.entrypoints=https
         - traefik.http.routers.onlyoffice-secure.rule=Host("office.${MAKERSPACE_DOMAIN}")
         - traefik.http.routers.onlyoffice-secure.tls=true
