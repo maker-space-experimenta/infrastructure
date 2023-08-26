@@ -9,7 +9,7 @@ networks:
 services:
   onlyoffice-document-server:
     container_name: onlyoffice-document-server
-    image: onlyoffice/documentserver:latest
+    image: onlyoffice/documentserver:7.4
     restart: always
     labels:
         - traefik.enable=true
