@@ -1,16 +1,26 @@
 api:
   dashboard: true
+#  rule = "HOST('traefik.makerspace.experimenta.science')"
 
 entryPoints:
   http:
     address: ":80"
   https:
     address: ":443"
+  metrics:
+    address: ":8082"
+
+metrics:
+  prometheus:
+    entryPoint: metrics
 
 providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
+  file:
+    filename: "/dynamic.yml"
+    watch: true
 
 certificatesResolvers:
   http:
@@ -19,3 +29,11 @@ certificatesResolvers:
       storage: acme.json
       httpChallenge:
         entryPoint: http
+
+#tls:
+#  options:
+#    default:
+#      minVersion: VersionTLS12
+
+#    mintls13:
+#      minVersion: VersionTLS13

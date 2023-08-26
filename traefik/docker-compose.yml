@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   traefik:
-    image: traefik:v2.4.8
+    image: traefik:v2.9.4
     container_name: traefik
     restart: unless-stopped
     security_opt:
@@ -12,10 +12,12 @@ services:
     ports:
       - 80:80
       - 443:443
+#      - 8082:8082
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yml:/traefik.yml:ro
+      - ./dynamic.yml:/dynamic.yml:ro
       - ./acme.json:/acme.json
       - ./.users:/.users
     # labels:
