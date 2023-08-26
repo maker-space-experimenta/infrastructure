@@ -9,7 +9,16 @@ networks:
 services:
   onlyoffice-document-server:
     container_name: onlyoffice-document-server
+#    build: .
     image: onlyoffice/documentserver:7.4
+    entrypoint:
+        - "sh"
+        - "-c"
+        - |
+          echo 'patching https://github.com/ONLYOFFICE/DocumentServer/issues/2186...'
+          find /var/www/onlyoffice/documentserver -name sdk-all-min.js -exec sed -E -i 's|(function +\w+\(\w+\) *\{ *function +\w+\(\)) *\{ *(\w+)\.open\((\w+),(\w+),(\w+)\);|\1{\nif (\4 \&\& \4.length > 5) {if (\4.substring(0, 5) == "http:") {\4 = \4.replace("http://", "https://");}};\n\2.open(\3,\4,\5);\n|' '{}' ';'
+          echo 'done! starting server...'
+          /app/ds/run-document-server.sh
     restart: always
     labels:
         - traefik.enable=true
@@ -17,14 +26,16 @@ services:
         - traefik.http.routers.onlyoffice.entrypoints=http
         - traefik.http.routers.onlyoffice.rule=Host("office.${MAKERSPACE_DOMAIN}")
         - traefik.http.middlewares.onlyoffice-https-redirect.redirectscheme.scheme=https
-        - traefik.http.middlewares.onlyoffice-headers.headers.customrequestheaders.X-Forwarded-Proto=https",
-        - traefik.http.routers.onlyoffice.middlewares=onlyoffice-https-redirect,onlyoffice-headers
+        - traefik.http.routers.onlyoffice.middlewares=onlyoffice-https-redirect
         - traefik.http.routers.onlyoffice-secure.entrypoints=https
         - traefik.http.routers.onlyoffice-secure.rule=Host("office.${MAKERSPACE_DOMAIN}")
         - traefik.http.routers.onlyoffice-secure.tls=true
         - traefik.http.routers.onlyoffice-secure.tls.certresolver=http
         - traefik.http.routers.onlyoffice-secure.service=onlyoffice
         - traefik.http.services.onlyoffice.loadbalancer.server.port=80
+        - traefik.http.services.onlyoffice.loadbalancer.passhostheader=true
+    environment:
+        - JWT_SECRET=${JWT_SECRET}
     networks:
       - backend
       - traefik_net
@@ -34,3 +45,4 @@ services:
     volumes:
       - ${VOLUMES}/document_data:/var/www/onlyoffice/Data
       - ${VOLUMES}/document_log:/var/log/onlyoffice
+
