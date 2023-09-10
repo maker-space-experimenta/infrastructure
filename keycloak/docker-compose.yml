@@ -16,9 +16,9 @@ services:
         volumes:
             - ${VOLUMES}/db:/var/lib/postgresql/data
         environment:
-            POSTGRES_DB: keycloak
-            POSTGRES_USER: keycloak
-            POSTGRES_PASSWORD: password
+            POSTGRES_DB: ${KEYCLOAK_DB_NAME}
+            POSTGRES_USER: ${KEYCLOAK_DB_USER}
+            POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
 
     keycloak:
         image: quay.io/keycloak/keycloak:22.0.1
