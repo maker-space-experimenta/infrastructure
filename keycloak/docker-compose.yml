@@ -35,16 +35,16 @@ services:
         labels:
             - traefik.enable=true
             - traefik.docker.network=traefik_net
-            - traefik.http.routers.${SERVICE_NAME}.entrypoints=http
-            - traefik.http.routers.${SERVICE_NAME}.rule=Host("login.${MAKERSPACE_DOMAIN}")
-            - traefik.http.middlewares.${SERVICE_NAME}-https-redirect.redirectscheme.scheme=https
-            - traefik.http.routers.${SERVICE_NAME}.middlewares=${SERVICE_NAME}-https-redirect
-            - traefik.http.routers.${SERVICE_NAME}-secure.entrypoints=https
-            - traefik.http.routers.${SERVICE_NAME}-secure.rule=Host("login.${MAKERSPACE_DOMAIN}")
-            - traefik.http.routers.${SERVICE_NAME}-secure.tls=true
-            - traefik.http.routers.${SERVICE_NAME}-secure.tls.certresolver=http
-            - traefik.http.routers.${SERVICE_NAME}-secure.service=${SERVICE_NAME}
-            - traefik.http.services.${SERVICE_NAME}.loadbalancer.server.port=8080
+            - traefik.http.routers.keyloak.entrypoints=http
+            - traefik.http.routers.keyloak.rule=Host("login.${MAKERSPACE_DOMAIN}")
+            - traefik.http.middlewares.keyloak-https-redirect.redirectscheme.scheme=https
+            - traefik.http.routers.keyloak.middlewares=keyloak-https-redirect
+            - traefik.http.routers.keyloak-secure.entrypoints=https
+            - traefik.http.routers.keyloak-secure.rule=Host("login.${MAKERSPACE_DOMAIN}")
+            - traefik.http.routers.keyloak-secure.tls=true
+            - traefik.http.routers.keyloak-secure.tls.certresolver=http
+            - traefik.http.routers.keyloak-secure.service=keyloak
+            - traefik.http.services.keyloak.loadbalancer.server.port=8080
         networks:
             - backend
             - traefik_net
@@ -53,8 +53,8 @@ services:
         depends_on:
             - mssql
             - mssqlscripts
-        volumes:
-            - ${VOLUMES}/theme:/opt/jboss/keycloak/themes/makerspace
+        # volumes:
+            # - ${VOLUMES}/theme:/opt/jboss/keycloak/themes/makerspace
         logging:
             driver: "json-file"
             options:
