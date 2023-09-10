@@ -4,43 +4,32 @@ networks:
     backend:
     traefik_net:
         external: true
+    prometheus_net:
+        external: true
+    mail_net:
+        external: true
 
 services:
 
-    mssql:
-        image: "mcr.microsoft.com/mssql/server"
-        restart: always
-        environment:
-            SA_PASSWORD: ${TOOLBOX_DB_SA_PASSWORD}
-            ACCEPT_EULA: "Y"
+    postgres:
+        image: postgres
         volumes:
-            - ${VOLUMES}/mssql/data:/var/opt/mssql/data
-            - ${VOLUMES}/mssql/log:/var/opt/mssql/log
-            - ${VOLUMES}/mssql/secrets:/var/opt/mssql/secrets
-        networks:
-            - backend
-        # ports:
-        #   - 1433:1433
-
-
-    mssqlscripts:
-        image: mcr.microsoft.com/mssql-tools
-        restart: on-failure
-        depends_on:
-            - mssql
-        networks:
-            - backend
-        command: /bin/bash -c 'until /opt/mssql-tools/bin/sqlcmd -S mssql -U sa -P "${TOOLBOX_DB_SA_PASSWORD}" -Q "create database Keycloak"; do sleep 5; done'
-
+            - ${VOLUMES}/db:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: keycloak
+            POSTGRES_USER: keycloak
+            POSTGRES_PASSWORD: password
 
     keycloak:
-        image: jboss/keycloak:14.0.0
+        image: quay.io/keycloak/keycloak:22.0.1
         restart: always
         environment:
-            - DB_VENDOR=mssql
+            - DB_VENDOR=POSTGRES
+            - DB_ADDR=postgres
+            - KEYCLOAK_ADMIN=admin
+            - KEYCLOAK_ADMIN_PASSWORD=admin
             - DB_USER=${KEYCLOAK_DB_USER}
             - DB_PASSWORD=${KEYCLOAK_DB_PASSWORD}
-            - DB_ADDR=${KEYCLOAK_DB_SERVER}
             - DB_DATABASE=${KEYCLOAK_DB_NAME}
             - PROXY_ADDRESS_FORWARDING=true
         labels:
@@ -59,12 +48,19 @@ services:
         networks:
             - backend
             - traefik_net
+            - prometheus_net
+            - mail_net
         depends_on:
             - mssql
             - mssqlscripts
         volumes:
-            - ${VOLUMES}/themes:/opt/jboss/keycloak/themes
-        
+            - ${VOLUMES}/theme:/opt/jboss/keycloak/themes/makerspace
+        logging:
+            driver: "json-file"
+            options:
+                max-file: "1"
+                max-size: "100k"
+
     mail:
         image: elsdoerfer/exim-sender
         restart: always
