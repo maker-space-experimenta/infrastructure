@@ -3,7 +3,7 @@ FROM nextcloud:26.0.5-apache
 RUN mkdir /data
 
 RUN apt-get update
-RUN apt-get install --no-install-recommends -y tidy csstidy nano netcat 
+RUN apt-get install --no-install-recommends -y tidy csstidy nano 
 
 RUN apt-get install software-properties-common -y && \
     apt-get update -y && \
