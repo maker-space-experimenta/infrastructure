@@ -3,7 +3,7 @@ version: '3.5'
 services:
 
   database:
-    image: mariadb:10
+    image: mariadb:10.5
     container_name: nextcloud_db
     restart: unless-stopped
     volumes:
