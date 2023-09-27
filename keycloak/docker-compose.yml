@@ -19,19 +19,30 @@ services:
             POSTGRES_DB: ${KEYCLOAK_DB_NAME}
             POSTGRES_USER: ${KEYCLOAK_DB_USER}
             POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+        networks:
+            - backend
 
     keycloak:
         image: quay.io/keycloak/keycloak:22.0.1
+        command: ['start', '--optimized']
         restart: always
         environment:
-            - DB_VENDOR=POSTGRES
-            - DB_ADDR=postgres
-            - KEYCLOAK_ADMIN=admin
-            - KEYCLOAK_ADMIN_PASSWORD=admin
-            - DB_USER=${KEYCLOAK_DB_USER}
-            - DB_PASSWORD=${KEYCLOAK_DB_PASSWORD}
-            - DB_DATABASE=${KEYCLOAK_DB_NAME}
-            - PROXY_ADDRESS_FORWARDING=true
+            JAVA_OPTS_APPEND: -Dkeycloak.profile.feature.upload_scripts=enabled
+            
+            KC_DB: postgres
+            KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+            KC_DB_URL: jdbc:postgresql://${KEYCLOAK_DB_HOST]/${keycloak}
+            KC_DB_USERNAME: ${KEYCLOAK_DB_USER}
+            KC_HEALTH_ENABLED: 'true'
+            KC_HTTP_ENABLED: 'true'
+            KC_METRICS_ENABLED: 'true'
+            # KC_HOSTNAME: keycloak.com.au
+            # KC_HOSTNAME_PORT: 8180
+            KC_HOSTNAME_URL: https://login.${MAKERSPACE_DOMAIN}
+            KC_PROXY: reencrypt
+            
+            KEYCLOAK_ADMIN: admin
+            KEYCLOAK_ADMIN_PASSWORD: password
         labels:
             - traefik.enable=true
             - traefik.docker.network=traefik_net
@@ -51,10 +62,7 @@ services:
             - prometheus_net
             - mail_net
         depends_on:
-            - mssql
-            - mssqlscripts
-        # volumes:
-            # - ${VOLUMES}/theme:/opt/jboss/keycloak/themes/makerspace
+            - postgres
         logging:
             driver: "json-file"
             options:
