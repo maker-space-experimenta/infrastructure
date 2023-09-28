@@ -9,6 +9,7 @@ services:
 
     postgres:
         image: postgres
+        restart: always
         volumes:
             - ${VOLUMES}/db:/var/lib/postgresql/data
         environment:
@@ -17,6 +18,11 @@ services:
             POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
         networks:
             - backend
+        logging:
+            driver: "json-file"
+            options:
+                max-file: "1"
+                max-size: "100k"
 
     keycloak:
         image: quay.io/keycloak/keycloak:22.0.1
@@ -75,3 +81,8 @@ services:
             - 25
         networks:
             - backend
+        logging:
+            driver: "json-file"
+            options:
+                max-file: "1"
+                max-size: "100k"
